@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Parse String and Send to Server</title>
+</head>
+<body>
+    <form id="stringForm">
+        <label for="inputString">Enter a String:</label>
+        <textarea id="inputString" name="inputString" rows="4" cols="50" required></textarea>
+        <br>
+        <button type="submit">Send String</button>
+    </form>
+
+    <div id="serverResponse"></div>
+
+    <script>
+        document.getElementById('stringForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const inputString = document.getElementById('inputString').value;
+
+            // Send inputString to localhost:8888
+            fetch('http://localhost:8888/data', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ inputString }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Server response:', data);
+                document.getElementById('serverResponse').innerText = `Server response: ${JSON.stringify(data)}`;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('serverResponse').innerText = `Error: ${error.message}`;
+            });
+        });
+    </script>
+</body>
+</html>
