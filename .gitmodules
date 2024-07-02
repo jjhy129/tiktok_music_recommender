@@ -1,3 +1,3 @@
 [submodule "backend/third_party/TikTok-Api"]
 	path = backend/third_party/TikTok-Api
-	url = git@github.com:davidteather/TikTok-Api.git
+	url = git@github.com:txff99/TikTok-Api.git
