@@ -2,10 +2,10 @@ FROM python:3.9
 
 WORKDIR /app
 
-COPY . /app
+COPY . .
 
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install -r requirements.txt
 
-EXPOSE 80
+EXPOSE 8888
 
 CMD ["python", "server.py"]
