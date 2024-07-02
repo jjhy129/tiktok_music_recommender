@@ -11,7 +11,7 @@ from TikTokApi import TikTokApi
 from TikTokApi.api.video import Video
 
 PORT=8888
-COUNT=5
+COUNT=100
 ms_token = os.environ.get("ms_token", None) 
 
 async def get_hashtag_videos(tag: str) -> dict:
@@ -20,7 +20,7 @@ async def get_hashtag_videos(tag: str) -> dict:
         await api.create_sessions(ms_tokens=[ms_token], num_sessions=1, sleep_after=3, headless=False)
         hashtag = api.hashtag(name=tag)
         count = 0
-        async for video in hashtag.videos(count=COUNT):
+        async for video in hashtag.videos(count=10):
             if count == COUNT:  break
             sound = video.sound
             video_info = {
@@ -28,9 +28,9 @@ async def get_hashtag_videos(tag: str) -> dict:
                 "authorName": sound.authorName,
                 "duration": sound.duration,
                 "play_url": sound.play_url,
-                "cover_large": sound.cover_large
+                "cover_large": sound.cover_large,
+                "stats": sound.stats
             }
-            print(video.as_dict)
             videos.append(video_info)
             count += 1
     return videos

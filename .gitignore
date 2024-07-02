@@ -1,3 +1,3 @@
-backend/third_party/TikTok-Api/.devcontainer
-backend/third_party/TikTok-Api/.github
-backend/third_party/TikTok-Api/.sphinx
+backend/third_party/TikTok-Api/.devcontainer/
+backend/third_party/TikTok-Api/.github/
+backend/third_party/TikTok-Api/.sphinx/
