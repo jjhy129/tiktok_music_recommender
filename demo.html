@@ -18,10 +18,10 @@
         document.getElementById('stringForm').addEventListener('submit', function(event) {
             event.preventDefault();
             const inputString = document.getElementById('inputString').value;
-            const public_dns = "http://ec2-35-90-200-252.us-west-2.compute.amazonaws.com";
+            const public_addr = "ec2-35-90-200-252.us-west-2.compute.amazonaws.com";
             const PORT = "8888"
 
-            fetch(`http://${public_dns}:${PORT}/data`, {
+            fetch(`http://${public_addr}:${PORT}/data`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
