@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <title>Parse String and Send to Server</title>
-    <script src="config.json" id="config"></script>
 </head>
 <body>
     <form id="stringForm">
@@ -19,9 +18,10 @@
         document.getElementById('stringForm').addEventListener('submit', function(event) {
             event.preventDefault();
             const inputString = document.getElementById('inputString').value;
-            const public_dns = document.getElementById('config').src;
+            const public_dns = "http://ec2-35-90-200-252.us-west-2.compute.amazonaws.com";
+            const PORT = "8888"
 
-            fetch(`http://${public_dns}:8888/data`, {
+            fetch(`http://${public_dns}:${PORT}/data`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

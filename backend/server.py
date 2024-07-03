@@ -11,7 +11,7 @@ from TikTokApi import TikTokApi
 from TikTokApi.api.video import Video
 
 PORT=8888
-COUNT=100
+COUNT=50
 ms_token = os.environ.get("ms_token", None) 
 
 async def get_hashtag_videos(tag: str) -> dict:
@@ -54,4 +54,4 @@ async def receive_data():
         return jsonify({'status': "error", 'message': e})
 
 if __name__ == '__main__':
-    app.run(port=PORT)
+    app.run(host='0.0.0.0',port=PORT)

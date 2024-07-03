@@ -1,13 +1,18 @@
-FROM python:3.9
+FROM mcr.microsoft.com/playwright:focal
 
 WORKDIR /app
 
 COPY . .
 
-RUN apt-get update && apt-get install -y python3-pip
-RUN pip install -r requirements.txt
+RUN apt-get update && \
+    apt-get install -y python3.9 python3.9-venv python3.9-dev python3-pip xvfb && \
+    rm /usr/bin/python3 && \
+    ln -s /usr/bin/python3.9 /usr/bin/python3
+
+RUN python3 -m pip install --upgrade pip
+
+RUN python3 -m pip install -r requirements.txt
+
 RUN python3 -m playwright install
 
-EXPOSE 8080
-
-CMD ["python", "server.py"]
+CMD xvfb-run python3 server.py
