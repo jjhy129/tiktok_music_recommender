@@ -10,55 +10,17 @@
     <div class="container">
         <div class="tag-input-box">
             <h2>Choose the video tags</h2>
-            <input type="text" placeholder="Input text">
-            <div class="tags">
-                <div class="tag">#Tag1</div>
-                <div class="tag">#Tag2</div>
-                <div class="tag">#Tag3</div>
-            </div>
+            <input type="text" id="tag-input" placeholder="Add a tag">
+            <button id="add-tag-button">Add Tag</button>
+            <div id="tags" class="tags"></div>
+            <div id="notice" style="color: red;"></div>
             <button class="search-button">Search for songs</button>
         </div>
-
         <div class="music-recommendations">
-            <h2>We find those sounds for you</h2>
-            <div class="music-cards">
-                <div class="music-card">
-                    <img src="placeholder.jpg" alt="Music">
-                    <h3>Music Name</h3>
-                    <p>Artist</p>
-                    <p>Song quality:</p>
-                    <p>Mood: Energetic</p>
-                    <p>Tempo: Fast</p>
-                    <p>Used in 1033 Tiktoks</p>
-                    <button>Used in these Videos</button>
-                    <button>Play</button>
-                </div>
-                <div class="music-card">
-                    <img src="placeholder.jpg" alt="Music">
-                    <h3>Music Name</h3>
-                    <p>Artist</p>
-                    <p>Song quality:</p>
-                    <p>Mood: Energetic</p>
-                    <p>Tempo: Fast</p>
-                    <p>Used in 1033 Tiktoks</p>
-                    <button>Used in these Videos</button>
-                    <button>Play</button>
-                </div>
-                <div class="music-card">
-                    <img src="placeholder.jpg" alt="Music">
-                    <h3>Music Name</h3>
-                    <p>Artist</p>
-                    <p>Song quality:</p>
-                    <p>Mood: Energetic</p>
-                    <p>Tempo: Fast</p>
-                    <p>Used in 1033 Tiktoks</p>
-                    <button>Used in these Videos</button>
-                    <button>Play</button>
-                </div>
-            </div>
+            <h2>We found these sounds for you</h2>
+            <div class="music-cards" id="music-cards"></div>
         </div>
     </div>
     <script src="script.js"></script>
-
 </body>
 </html>

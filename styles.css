@@ -30,9 +30,23 @@ body {
     margin: 10px 0;
 }
 
+#add-tag-button {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background-color: #6b47dc;
+    color: white;
+    text-align: center;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
 .tags {
     display: flex;
     gap: 10px;
+    flex-wrap: wrap;
 }
 
 .tag {
@@ -40,6 +54,17 @@ body {
     padding: 5px 10px;
     border-radius: 20px;
     font-size: 14px;
+    display: flex;
+    align-items: center;
+}
+
+.tag span {
+    margin-right: 10px;
+}
+
+.tag .remove-tag {
+    cursor: pointer;
+    color: red;
 }
 
 .search-button {
@@ -96,7 +121,7 @@ body {
     margin: 5px 0;
 }
 
-.music-card button {
+.music-card button, .music-card a {
     margin-top: 10px;
     padding: 10px 20px;
     background-color: #6b47dc;
@@ -104,4 +129,6 @@ body {
     border: none;
     border-radius: 4px;
     cursor: pointer;
+    text-decoration: none;
+    text-align: center;
 }
