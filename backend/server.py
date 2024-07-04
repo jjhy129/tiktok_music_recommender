@@ -51,7 +51,7 @@ async def receive_data():
         return jsonify({'status': 'success', 'data': item_list})
     except Exception as e:
         print("error: ", e)
-        return jsonify({'status': "error", 'message': e})
+        return jsonify({'status': "error", 'message': str(e)})
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0',port=PORT)

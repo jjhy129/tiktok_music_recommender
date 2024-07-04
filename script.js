@@ -9,7 +9,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const searchButton = document.querySelector('.search-button');
     const musicRecommendations = document.querySelector('.music-recommendations');
     const musicCardsContainer = document.getElementById('music-cards');
-    const notice = document.getElementById('notice');
+    const tagInvalidNotice = document.getElementById('tag_invalid_notice');
+    const noResultNotice = document.getElementById('no_result_notice');
+
+    let currentPlaying = {
+        audio: null,
+        button: null
+    };
 
     addTagButton.addEventListener('click', function() {
         const tag = tagInput.value.trim();
@@ -24,7 +30,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function addTag(tag) {
         const tagElement = document.createElement('div');
         tagElement.className = 'tag';
-        tagElement.innerHTML = `<span>${tag}</span><span class="remove-tag">&times;</span>`;
+        tagElement.innerHTML = `<span>#${tag}</span><span class="remove-tag">&times;</span>`;
         tagsContainer.appendChild(tagElement);
 
         tagElement.querySelector('.remove-tag').addEventListener('click', function() {
@@ -36,14 +42,17 @@ document.addEventListener('DOMContentLoaded', function() {
         const tags = Array.from(tagsContainer.getElementsByClassName('tag')).map(tagElement => 
             tagElement.textContent.replace('×', '').trim()
         );
-        const inputString = tags.join(' ');
-        console.log(inputString);
-        
+        let inputString = tags.join(' ');
+        inputString += " #music"
+        console.log("the input tag is: ",inputString);
+
         if (!/\w/.test(inputString)) {
-            notice.textContent = 'Please enter a valid tag'; 
+            tagInvalidNotice.textContent = 'Please enter a valid tag'; 
             return;
         }
-        notice.textContent = '';
+        //clear prev notice mesg
+        tagInvalidNotice.textContent = '';
+        noResultNotice.textContent = '';
         
         // fetch metadata based on tag
         fetch(FETCH_URL, {
@@ -59,15 +68,18 @@ document.addEventListener('DOMContentLoaded', function() {
             // Clear previous recommendations
             musicCardsContainer.innerHTML = '';
             
-            // Process and display song recommendations
             const songs = processMetadata(metadata.data);
             songs.forEach(song => {
                 const card = createMusicCard(song);
                 musicCardsContainer.appendChild(card);
             });
-        }).catch(error => console.error('Error fetching data:', error));
+        }).catch(error => {
+            console.error('Error fetching data:', error)
+            musicRecommendations.style.display = 'none';
+            noResultNotice.textContent = 'Oops, seems like no result on this tag'; 
+        });
         
-        // Show music recommendations section
+        
         musicRecommendations.style.display = 'block';
     });
 
@@ -119,10 +131,37 @@ document.addEventListener('DOMContentLoaded', function() {
         const duration = document.createElement('p');
         duration.textContent = `Duration: ${song.duration} sec`;
 
+        const audioPlayer = document.createElement('audio');
+        audioPlayer.src = song.playUrl;
+        audioPlayer.controls = true; 
+        audioPlayer.className = 'audio-player';
+        
         const playButton = document.createElement('button');
         playButton.textContent = 'Play';
         playButton.onclick = function() {
-            window.open(song.playUrl, '_blank');
+            if (currentPlaying.audio && currentPlaying.audio != audioPlayer) {
+                currentPlaying.audio.pause();
+                currentPlaying.audio.currentTime = 0;
+                currentPlaying.button.textContent = 'Play';
+            }
+            
+            if (audioPlayer.paused) {
+                audioPlayer.play();
+                playButton.textContent = 'Pause';
+                currentPlaying.audio = audioPlayer;
+                currentPlaying.button = this;
+            } else {
+                audioPlayer.pause();
+                playButton.textContent = 'Play';
+                currentPlaying.audio = null;
+            }
+        };
+
+        const pauseButton = document.createElement('button');
+        pauseButton.textContent = 'Pause';
+        pauseButton.onclick = function() {
+            audioPlayer.pause();
+            playButton.textContent = 'Play';
         };
 
         card.appendChild(img);
