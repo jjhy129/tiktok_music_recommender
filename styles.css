@@ -132,3 +132,51 @@ body {
     text-decoration: none;
     text-align: center;
 }
+
+#music-bar {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background-color: #6b47dc;
+    color: white;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
+    display: none;
+}
+
+#music-bar #current-song-info {
+    flex-grow: 1;
+}
+
+#music-bar #controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#music-bar #controls button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+#progress-bar {
+    width: 100%;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+#loading {
+    display: none;
+    text-align: center;
+    padding: 20px;
+}
+
+#loading img {
+    width: 50px;
+    height: 50px;
+}
