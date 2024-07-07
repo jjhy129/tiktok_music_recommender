@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         inputString += " #music"
         
-        //clear prev notice mesg
+        //clear previous notice 
         tagInvalidNotice.textContent = '';
         noResultNotice.textContent = '';
         
@@ -148,6 +148,12 @@ document.addEventListener('DOMContentLoaded', function() {
             playSong(song);
         };
 
+        const downloadButton = document.createElement('button');
+        downloadButton.textContent = 'Download';
+        downloadButton.onclick = function() {
+            downloadSong(song.playUrl, song.title);
+        };
+
         card.appendChild(img);
         card.appendChild(title);
         card.appendChild(author);
@@ -157,9 +163,24 @@ document.addEventListener('DOMContentLoaded', function() {
         card.appendChild(shareCount);
         card.appendChild(duration);
         card.appendChild(playButton);
+        card.appendChild(downloadButton);
 
         return card;
     }
+    function downloadSong(url, title) {
+        fetch(url)
+            .then(response => response.blob())
+            .then(blob => {
+                const link = document.createElement('a');
+                link.href = window.URL.createObjectURL(blob);
+                link.download = `${title}.mp3`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            })
+            .catch(error => console.error('Error downloading the song:', error));
+    }
+
     function playSong(song) {
         audio.pause();
         audio.currentTime = 0;

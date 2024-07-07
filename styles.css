@@ -131,6 +131,8 @@ body {
     cursor: pointer;
     text-decoration: none;
     text-align: center;
+    width: 100%; /* Ensures buttons are the same width */
+    box-sizing: border-box; /* Include padding and border in element's total width and height */
 }
 
 #music-bar {
@@ -167,7 +169,7 @@ body {
 #progress-bar {
     width: 100%;
     margin-left: 20px;
-    margin-right: 20px;
+    margin-right: 40px;
 }
 
 #loading {
