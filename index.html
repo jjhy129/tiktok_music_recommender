@@ -10,7 +10,14 @@
 <body>
     <div class="container">
         <div class="tag-input-box">
-            <h2>Choose the video tags</h2>
+            <div class="upload-container">
+                <h3>Upload a Video</h3>
+                <form id="upload-form">
+                    <input type="file" id="video-file" accept="video/*" required>
+                    <button type="submit">Upload</button>
+                </form>
+                <div id="upload-status"></div>
+            </div>
             <input type="text" id="tag-input" placeholder="Add a tag">
             <button id="add-tag-button">Add Tag</button>
             <div id="tags" class="tags"></div>

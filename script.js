@@ -2,7 +2,9 @@ const PUBLIC_ADDR = 'ec2-35-90-200-252.us-west-2.compute.amazonaws.com';
 const PORT = '8888';
 const FETCH_URL = `http://${PUBLIC_ADDR}:${PORT}/data`;
 
+
 document.addEventListener('DOMContentLoaded', function() {
+    const vidUpldButton = document.getElementById("upload-form");
     const addTagButton = document.getElementById('add-tag-button');
     const tagInput = document.getElementById('tag-input');
     const tagsContainer = document.getElementById('tags');
@@ -18,13 +20,227 @@ document.addEventListener('DOMContentLoaded', function() {
     const currentSongTitle = document.getElementById('current-song-title');
     const currentSongAuthor = document.getElementById('current-song-author');
     const progressBar = document.getElementById('progress-bar');
-
+    
     const tagInvalidNotice = document.getElementById('tag_invalid_notice');
     const noResultNotice = document.getElementById('no_result_notice');
-    
+    const uploadStatus = document.getElementById('upload-status');
+
     let currentSongIndex = 0;
     let songs = null;
     let audio = new Audio();
+    let videoFile = null;
+
+    // *----tag related----*
+    
+    function addTag(tag) {
+        const tagElement = document.createElement('div');
+        tagElement.className = 'tag';
+        tagElement.innerHTML = `<span>#${tag}</span><span class="remove-tag">&times;</span>`;
+        tagsContainer.appendChild(tagElement);
+    
+        tagElement.querySelector('.remove-tag').addEventListener('click', function() {
+            tagsContainer.removeChild(tagElement);
+        });
+    }
+
+    // *----fetch data related----*
+
+    function processMetadata(metadata) {
+        return metadata.map(item => ({
+            title: item.title,
+            authorName: item.authorName,
+            coverLarge: item.cover_large,
+            playUrl: item.play_url,
+            duration: item.duration,
+            playCount: item.stats.playCount,
+            diggCount: item.stats.diggCount,
+            commentCount: item.stats.commentCount,
+            shareCount: item.stats.shareCount,
+            score: calculateScore(item.stats)
+        })).sort((a, b) => b.score - a.score);
+    }
+    
+    function calculateScore(stats) {
+        return stats.playCount + stats.diggCount * 2 + stats.commentCount * 3 + stats.shareCount * 4;
+    }
+
+    // *----music card related----*
+    
+    function createMusicCard(song,idx) {
+        const card = document.createElement('div');
+        card.className = 'music-card';
+    
+        const img = document.createElement('img');
+        img.src = song.coverLarge;
+        img.alt = song.title;
+    
+        const title = document.createElement('h3');
+        title.textContent = song.title;
+    
+        const author = document.createElement('p');
+        author.textContent = `Author: ${song.authorName}`;
+    
+        const playCount = document.createElement('p');
+        playCount.textContent = `Play Count: ${song.playCount}`;
+    
+        const diggCount = document.createElement('p');
+        diggCount.textContent = `Digg Count: ${song.diggCount}`;
+    
+        const commentCount = document.createElement('p');
+        commentCount.textContent = `Comment Count: ${song.commentCount}`;
+    
+        const shareCount = document.createElement('p');
+        shareCount.textContent = `Share Count: ${song.shareCount}`;
+    
+        const duration = document.createElement('p');
+        duration.textContent = `Duration: ${song.duration} sec`;
+        
+        const playButton = document.createElement('button');
+        playButton.textContent = 'Play';
+        playButton.onclick = function() {
+            playSong(song);
+        };
+    
+        const downloadButton = document.createElement('button');
+        downloadButton.textContent = 'Download';
+        downloadButton.onclick = function() {
+            downloadSong(song.playUrl, song.title);
+        };
+    
+        const demoButton = document.createElement('button');
+        demoButton.textContent = 'Demo';
+        demoButton.onclick = function() {
+            playDemo(song);
+        };
+    
+        card.appendChild(img);
+        card.appendChild(title);
+        card.appendChild(author);
+        card.appendChild(playCount);
+        card.appendChild(diggCount);
+        card.appendChild(commentCount);
+        card.appendChild(shareCount);
+        card.appendChild(duration);
+        card.appendChild(playButton);
+        card.appendChild(downloadButton);
+        card.appendChild(demoButton);
+    
+        return card;
+    }
+
+    function playDemo(song) {
+        const audioUrl = song.playUrl; // Assuming song.audioUrl is the URL of the uploaded audio
+        const videoUrl = URL.createObjectURL(videoFile);
+    
+        const demoWindow = window.open('', '_blank');
+        if (demoWindow) {
+            demoWindow.document.open();
+            demoWindow.document.write(`
+                <!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Video demo</title>
+                <style>
+                    #audioElement {
+                        display: none; /* Hide the audio element */
+                    }
+                </style>
+                <link rel="stylesheet" href="styles.css">
+            </head>
+            <body>
+                <div>
+                    <video id="videoElement" width="640" height="360">
+                        <source src="${videoUrl}" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+                <div>
+                    <audio id="audioElement" controls>
+                        <source src="${audioUrl}" type="audio/mpeg">
+                        Your browser does not support the audio tag.
+                    </audio>
+                </div>
+                <div>
+                    <button id="playPauseButton">Play/Pause</button>
+                </div>
+    
+                <script>
+                    const video = document.getElementById('videoElement');
+                    const audio = document.getElementById('audioElement');
+                    const playPauseButton = document.getElementById('playPauseButton');
+                    let isPlaying = false;
+    
+                    // Play/Pause button click event
+                    playPauseButton.addEventListener('click', function() {
+                        if (!isPlaying) {
+                            video.play();
+                            audio.play();
+                            playPauseButton.textContent = 'Pause';
+                            isPlaying = true;
+                        } else {
+                            video.pause();
+                            audio.pause();
+                            playPauseButton.textContent = 'Play';
+                            isPlaying = false;
+                        }
+                    });
+    
+                    audio.addEventListener('ended', function() {
+                        audio.currentTime = 0; // Reset audio to start
+                        audio.play();
+                    });
+    
+                </script>
+            </body>
+            </html>
+            `);
+            demoWindow.document.close();
+        } else {
+            alert('Popup blocked! Please allow popups to view the demo.');
+        }
+    }
+
+    function downloadSong(url, title) {
+        fetch(url)
+            .then(response => response.blob())
+            .then(blob => {
+                const link = document.createElement('a');
+                link.href = window.URL.createObjectURL(blob);
+                link.download = `${title}.mp3`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            })
+            .catch(error => console.error('Error downloading the song:', error));
+    }
+    
+    function playSong(song) {
+        audio.pause();
+        audio.currentTime = 0;
+        audio.src = song.playUrl;
+        audio.play();
+        currentSongTitle.textContent = song.title;
+        currentSongAuthor.textContent = song.authorName;
+        playPauseButton.innerHTML = '<i class="fas fa-pause"></i>';
+        currentSongIndex = songs.indexOf(song);
+        
+        musicBar.style.display = 'flex';
+        
+        audio.addEventListener('timeupdate', function() {
+            progressBar.value = (audio.currentTime / audio.duration) * 100;
+        });
+    }
+
+    vidUpldButton.addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const fileInput = document.getElementById('video-file');
+        videoFile = fileInput.files[0];
+        uploadStatus.textContent = `Video "${videoFile.name}" uploaded successfully.`;
+        uploadStatus.style.display = 'block';
+    });
 
     addTagButton.addEventListener('click', function() {
         const tag = tagInput.value.trim();
@@ -35,17 +251,6 @@ document.addEventListener('DOMContentLoaded', function() {
         addTag(tag);
         tagInput.value = '';
     });
-
-    function addTag(tag) {
-        const tagElement = document.createElement('div');
-        tagElement.className = 'tag';
-        tagElement.innerHTML = `<span>#${tag}</span><span class="remove-tag">&times;</span>`;
-        tagsContainer.appendChild(tagElement);
-
-        tagElement.querySelector('.remove-tag').addEventListener('click', function() {
-            tagsContainer.removeChild(tagElement);
-        });
-    }
 
     searchButton.addEventListener('click', function() {
         const tags = Array.from(tagsContainer.getElementsByClassName('tag')).map(tagElement => 
@@ -96,109 +301,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    function processMetadata(metadata) {
-        return metadata.map(item => ({
-            title: item.title,
-            authorName: item.authorName,
-            coverLarge: item.cover_large,
-            playUrl: item.play_url,
-            duration: item.duration,
-            playCount: item.stats.playCount,
-            diggCount: item.stats.diggCount,
-            commentCount: item.stats.commentCount,
-            shareCount: item.stats.shareCount,
-            score: calculateScore(item.stats)
-        })).sort((a, b) => b.score - a.score);
-    }
-
-    function calculateScore(stats) {
-        return stats.playCount + stats.diggCount * 2 + stats.commentCount * 3 + stats.shareCount * 4;
-    }
-
-    function createMusicCard(song,idx) {
-        const card = document.createElement('div');
-        card.className = 'music-card';
-
-        const img = document.createElement('img');
-        img.src = song.coverLarge;
-        img.alt = song.title;
-
-        const title = document.createElement('h3');
-        title.textContent = song.title;
-
-        const author = document.createElement('p');
-        author.textContent = `Author: ${song.authorName}`;
-
-        const playCount = document.createElement('p');
-        playCount.textContent = `Play Count: ${song.playCount}`;
-
-        const diggCount = document.createElement('p');
-        diggCount.textContent = `Digg Count: ${song.diggCount}`;
-
-        const commentCount = document.createElement('p');
-        commentCount.textContent = `Comment Count: ${song.commentCount}`;
-
-        const shareCount = document.createElement('p');
-        shareCount.textContent = `Share Count: ${song.shareCount}`;
-
-        const duration = document.createElement('p');
-        duration.textContent = `Duration: ${song.duration} sec`;
-        
-        const playButton = document.createElement('button');
-        playButton.textContent = 'Play';
-        playButton.onclick = function() {
-            playSong(song);
-        };
-
-        const downloadButton = document.createElement('button');
-        downloadButton.textContent = 'Download';
-        downloadButton.onclick = function() {
-            downloadSong(song.playUrl, song.title);
-        };
-
-        card.appendChild(img);
-        card.appendChild(title);
-        card.appendChild(author);
-        card.appendChild(playCount);
-        card.appendChild(diggCount);
-        card.appendChild(commentCount);
-        card.appendChild(shareCount);
-        card.appendChild(duration);
-        card.appendChild(playButton);
-        card.appendChild(downloadButton);
-
-        return card;
-    }
-    function downloadSong(url, title) {
-        fetch(url)
-            .then(response => response.blob())
-            .then(blob => {
-                const link = document.createElement('a');
-                link.href = window.URL.createObjectURL(blob);
-                link.download = `${title}.mp3`;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-            })
-            .catch(error => console.error('Error downloading the song:', error));
-    }
-
-    function playSong(song) {
-        audio.pause();
-        audio.currentTime = 0;
-        audio.src = song.playUrl;
-        audio.play();
-        currentSongTitle.textContent = song.title;
-        currentSongAuthor.textContent = song.authorName;
-        playPauseButton.innerHTML = '<i class="fas fa-pause"></i>';
-        currentSongIndex = songs.indexOf(song);
-        
-        musicBar.style.display = 'flex';
-        
-        audio.addEventListener('timeupdate', function() {
-            progressBar.value = (audio.currentTime / audio.duration) * 100;
-        });
-    }
+    
     playPauseButton.addEventListener('click', function() {
         if (audio.paused) {
             audio.play();
