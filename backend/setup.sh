@@ -10,7 +10,7 @@ elif [ "$1" == "-build" ]; then
     sudo docker build . -t flask 
 
 elif [ "$1" == "-clean" ]; then
-    sudo docker images -q | xargs sudo docker rmi -f
+    sudo docker system prune -a
 
 else
     echo "Usage: $0 <-rm | -start> <container_name> [start_command]"
