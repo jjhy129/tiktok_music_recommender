@@ -11,7 +11,7 @@ from TikTokApi import TikTokApi
 from TikTokApi.api.video import Video
 
 PORT = 8888
-COUNT = 51
+COUNT = 50
 ms_token = os.environ.get("ms_token")
 
 api = None

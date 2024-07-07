@@ -2,7 +2,6 @@ const PUBLIC_ADDR = 'ec2-35-90-200-252.us-west-2.compute.amazonaws.com';
 const PORT = '8888';
 const FETCH_URL = `http://${PUBLIC_ADDR}:${PORT}/data`;
 
-
 document.addEventListener('DOMContentLoaded', function() {
     const vidUpldButton = document.getElementById("upload-form");
     const addTagButton = document.getElementById('add-tag-button');
@@ -29,7 +28,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let songs = null;
     let audio = new Audio();
     let videoFile = null;
-
+    
     // *----tag related----*
     
     function addTag(tag) {
@@ -65,7 +64,14 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // *----music card related----*
-    
+    function truncateText(text, maxWords) {
+        length = text.length;
+        if (length > maxWords) {
+            return text.substring(0, maxWords) + '...';
+        }
+        return text;
+    }
+
     function formatNumber(num) {
         if (num >= 1000000) {
             return (num / 1000000).toFixed(1) + 'M';
@@ -83,31 +89,32 @@ document.addEventListener('DOMContentLoaded', function() {
         img.src = song.coverLarge;
         img.alt = song.title;
     
+        const titleContainer = document.createElement('div');
+        titleContainer.className = 'title-container';
         const title = document.createElement('h3');
-        title.textContent = song.title;
-    
+        title.textContent = truncateText(song.title, 15); // Example: Limiting to 30 characters
+        titleContainer.appendChild(title);
+
+        const authorContainer = document.createElement('div');
+        authorContainer.className = 'author-container';
         const author = document.createElement('p');
-        author.textContent = `Author: ${song.authorName}`;
+        author.textContent = `Author: ${truncateText(song.authorName, 15)}`; // Example: Limiting to 20 characters
+        authorContainer.appendChild(author);
         
         const duration = document.createElement('p');
         duration.textContent = `Duration: ${song.duration} sec`;
         
         const playCount = document.createElement('p');
-        playCount.className = 'less-obvious';
-        playCount.textContent = `Play Count: ${song.playCount}`;
-    
+        playCount.textContent = `Played: ${formatNumber(song.playCount)}`; // Using formatNumber function
+
         const diggCount = document.createElement('p');
-        diggCount.className = 'less-obvious';
-        diggCount.textContent = `Digg Count: ${song.diggCount}`;
-    
-        const commentCount = document.createElement('p');
-        commentCount.className = 'less-obvious';
-        commentCount.textContent = `Comment Count: ${song.commentCount}`;
-    
-        const shareCount = document.createElement('p');
-        shareCount.className = 'less-obvious';
-        shareCount.textContent = `Share Count: ${song.shareCount}`;
-        
+        diggCount.textContent = `Digged: ${formatNumber(song.diggCount)}`; // Using formatNumber function
+
+        const playDiggContainer = document.createElement('div');
+        playDiggContainer.className = 'play-digg-container';
+        playDiggContainer.appendChild(playCount);
+        playDiggContainer.appendChild(diggCount);
+
         const playButton = document.createElement('button');
         playButton.textContent = 'Play';
         playButton.onclick = function() {
@@ -135,18 +142,19 @@ document.addEventListener('DOMContentLoaded', function() {
             emptyVideoNotice.style.display = 'none';
             playDemo(song);
         };
-        
+
+        const buttonContainer = document.createElement('div');
+        buttonContainer.className = 'button-container';
+        buttonContainer.appendChild(playButton);
+        buttonContainer.appendChild(downloadButton);
+        buttonContainer.appendChild(demoButton);
         card.appendChild(img);
-        card.appendChild(title);
-        card.appendChild(author);
+        
+        card.appendChild(titleContainer);
+        card.appendChild(authorContainer);
         card.appendChild(duration);
-        card.appendChild(playCount);
-        card.appendChild(diggCount);
-        card.appendChild(commentCount);
-        card.appendChild(shareCount);
-        card.appendChild(playButton);
-        card.appendChild(downloadButton);
-        card.appendChild(demoButton);
+        card.appendChild(playDiggContainer);
+        card.appendChild(buttonContainer);
         card.appendChild(emptyVideoNotice);
     
         return card;
