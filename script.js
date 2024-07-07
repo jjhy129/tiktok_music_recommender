@@ -77,9 +77,10 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(response => response.json())
         .then(metadata => {
-            loadingElement.style.display = 'none';
             // Clear previous recommendations
             musicCardsContainer.innerHTML = '';
+            
+            loadingElement.style.display = 'none';
             
             songs = processMetadata(metadata.data);
             songs.forEach(song => {
@@ -88,6 +89,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
             musicRecommendations.style.display = 'block';
         }).catch(error => {
+            loadingElement.style.display = 'none';
             console.error('Error fetching data:', error)
             musicRecommendations.style.display = 'none';
             noResultNotice.textContent = 'Oops, seems like no result on this tag'; 
