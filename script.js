@@ -106,13 +106,23 @@ document.addEventListener('DOMContentLoaded', function() {
         downloadButton.onclick = function() {
             downloadSong(song.playUrl, song.title);
         };
-    
+
+        const emptyVideoNotice = document.createElement('p');
+        emptyVideoNotice.style.display = 'none';
+        emptyVideoNotice.style.color = 'red';
+        emptyVideoNotice.textContent = 'Please upload a video first';
+
         const demoButton = document.createElement('button');
         demoButton.textContent = 'Demo';
         demoButton.onclick = function() {
+            if (videoFile==null){
+                emptyVideoNotice.style.display = 'block';
+                return;
+            }
+            emptyVideoNotice.style.display = 'none';
             playDemo(song);
         };
-    
+        
         card.appendChild(img);
         card.appendChild(title);
         card.appendChild(author);
@@ -124,6 +134,7 @@ document.addEventListener('DOMContentLoaded', function() {
         card.appendChild(playButton);
         card.appendChild(downloadButton);
         card.appendChild(demoButton);
+        card.appendChild(emptyVideoNotice);
     
         return card;
     }
@@ -147,7 +158,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         display: none; /* Hide the audio element */
                     }
                 </style>
-                <link rel="stylesheet" href="styles.css">
+                <link rel="stylesheet" href="demo.css">
             </head>
             <body>
                 <div>
@@ -162,7 +173,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         Your browser does not support the audio tag.
                     </audio>
                 </div>
-                <div>
+
+                <div class="button-container">
                     <button id="playPauseButton">Play/Pause</button>
                 </div>
     
@@ -186,10 +198,20 @@ document.addEventListener('DOMContentLoaded', function() {
                             isPlaying = false;
                         }
                     });
-    
+
+                    video.addEventListener('ended', function() {
+                        audio.currentTime = 0; // Reset audio to start
+                        audio.pause();
+                        playPauseButton.textContent = 'Play';
+                        isPlaying = false;
+                    });
+
+
                     audio.addEventListener('ended', function() {
                         audio.currentTime = 0; // Reset audio to start
                         audio.play();
+                        playPauseButton.textContent = 'Play';
+                        isPlaying = false;
                     });
     
                 </script>
