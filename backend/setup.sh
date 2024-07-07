@@ -1,7 +1,7 @@
 #!bin/bash
 
 if [ "$1" == "-clear" ]; then
-    sudo docker rm $(sudo docker ps -aq)
+    sudo docker stop $(sudo docker ps -aq) && sudo docker rm $(sudo docker ps -a -aq)
 
 elif [ "$1" == "-start" ]; then
     sudo docker run -d --network host flask >> log/log.txt 2>&1

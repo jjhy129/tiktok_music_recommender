@@ -1,4 +1,4 @@
-# This is the backend where the service is supported
+# This is the proxy server supporting the frontend
 
 ## installation
 1. Clone the repository:

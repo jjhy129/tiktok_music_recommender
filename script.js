@@ -66,6 +66,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // *----music card related----*
     
+    function formatNumber(num) {
+        if (num >= 1000000) {
+            return (num / 1000000).toFixed(1) + 'M';
+        } else if (num >= 1000) {
+            return (num / 1000).toFixed(1) + 'k';
+        }
+        return num;
+    }   
+
     function createMusicCard(song,idx) {
         const card = document.createElement('div');
         card.className = 'music-card';
@@ -79,21 +88,25 @@ document.addEventListener('DOMContentLoaded', function() {
     
         const author = document.createElement('p');
         author.textContent = `Author: ${song.authorName}`;
-    
+        
+        const duration = document.createElement('p');
+        duration.textContent = `Duration: ${song.duration} sec`;
+        
         const playCount = document.createElement('p');
+        playCount.className = 'less-obvious';
         playCount.textContent = `Play Count: ${song.playCount}`;
     
         const diggCount = document.createElement('p');
+        diggCount.className = 'less-obvious';
         diggCount.textContent = `Digg Count: ${song.diggCount}`;
     
         const commentCount = document.createElement('p');
+        commentCount.className = 'less-obvious';
         commentCount.textContent = `Comment Count: ${song.commentCount}`;
     
         const shareCount = document.createElement('p');
+        shareCount.className = 'less-obvious';
         shareCount.textContent = `Share Count: ${song.shareCount}`;
-    
-        const duration = document.createElement('p');
-        duration.textContent = `Duration: ${song.duration} sec`;
         
         const playButton = document.createElement('button');
         playButton.textContent = 'Play';
@@ -115,7 +128,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const demoButton = document.createElement('button');
         demoButton.textContent = 'Demo';
         demoButton.onclick = function() {
-            if (videoFile==null){
+            if (videoFile == null){
                 emptyVideoNotice.style.display = 'block';
                 return;
             }
@@ -126,11 +139,11 @@ document.addEventListener('DOMContentLoaded', function() {
         card.appendChild(img);
         card.appendChild(title);
         card.appendChild(author);
+        card.appendChild(duration);
         card.appendChild(playCount);
         card.appendChild(diggCount);
         card.appendChild(commentCount);
         card.appendChild(shareCount);
-        card.appendChild(duration);
         card.appendChild(playButton);
         card.appendChild(downloadButton);
         card.appendChild(demoButton);
@@ -286,7 +299,6 @@ document.addEventListener('DOMContentLoaded', function() {
             tagInvalidNotice.textContent = 'Please enter a valid tag'; 
             return;
         }
-        inputString += " #music"
         
         //clear previous notice 
         tagInvalidNotice.textContent = '';
