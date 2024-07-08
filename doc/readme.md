@@ -43,10 +43,3 @@ We learned about integrating third-party APIs, handling large datasets efficient
 ## What's Next for TikTok Music Recommender Based on Hashtags
 
 Currently, we don't yet have a domain name and SSL credentials, meaning a frontend webpage using "https" is not available (however, we can still experience it by running HTML locally). The next step could be hosting the webpage and letting more people experience this project. We also plan to build our own database if we have many users and make better recommendations based on our database.
-
-
-## Video Demo
-
-Check out our video demo:
-
-<iframe src="https://vimeo.com/980204435?share=copy" width="560" height="315" frameborder="0" allowfullscreen></iframe>
