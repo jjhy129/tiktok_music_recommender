@@ -8,4 +8,5 @@ This project is a TikTok video background music recommender that suggests suitab
 - Support video demos with the background music selected. 
 
 ## Usage
-- open index.html in a browser
+1. clone the repository
+2. open index.html in a browser
