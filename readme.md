@@ -15,4 +15,4 @@ This project is a TikTok video background music recommender that suggests suitab
 
 Check out our video demo:
 
-[![preview](doc/preview.png)](https://vimeo.com/980204435?share=copy)
+[![preview](doc/preview.png)](https://vimeo.com/980232320?share=copy)
