@@ -7,9 +7,9 @@ This project is a TikTok video background music recommender that suggests suitab
 - Recommend background music based on video tags.
 - Support video demos with the background music selected. 
 
-## Usage
-1. clone the repository
-2. open index.html in a browser
+## Try it yourself
+[https://www.normbrak.com](https://www.normbrak.com)
+
 
 ## Video Demo
 

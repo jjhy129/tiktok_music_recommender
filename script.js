@@ -1,6 +1,5 @@
-const PUBLIC_ADDR = 'ec2-35-90-200-252.us-west-2.compute.amazonaws.com';
-const PORT = '8888';
-const FETCH_URL = `http://${PUBLIC_ADDR}:${PORT}/data`;
+const PUBLIC_ADDR = 'www.normbrak.com';
+const FETCH_URL = `https://${PUBLIC_ADDR}/data`;
 
 document.addEventListener('DOMContentLoaded', function() {
     const vidUpldButton = document.getElementById("upload-form");
