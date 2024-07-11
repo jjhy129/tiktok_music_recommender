@@ -146,7 +146,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const buttonContainer = document.createElement('div');
         buttonContainer.className = 'button-container';
         buttonContainer.appendChild(playButton);
-        buttonContainer.appendChild(downloadButton);
+        // buttonContainer.appendChild(downloadButton);
         buttonContainer.appendChild(demoButton);
         card.appendChild(img);
         
