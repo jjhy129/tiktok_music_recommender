@@ -10,7 +10,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const musicRecommendations = document.querySelector('.music-recommendations');
     const musicCardsContainer = document.getElementById('music-cards');
     const loadingElement = document.getElementById('loading');
-    
+    const loadingNotice = document.getElementById('loading-notice'); // New loading notice element
+
     const musicBar = document.getElementById('music-bar');
     const playPauseButton = document.getElementById('play-pause-button');
     const prevButton = document.getElementById('prev-button');
@@ -18,31 +19,32 @@ document.addEventListener('DOMContentLoaded', function() {
     const currentSongTitle = document.getElementById('current-song-title');
     const currentSongAuthor = document.getElementById('current-song-author');
     const progressBar = document.getElementById('progress-bar');
-    
+
     const tagInvalidNotice = document.getElementById('tag_invalid_notice');
     const noResultNotice = document.getElementById('no_result_notice');
     const uploadStatus = document.getElementById('upload-status');
+    const identifiedMusicDetails = document.getElementById('identified-music-details');
+    const modal = document.getElementById('identified-music-modal');
+    const closeModal = document.querySelector('.close');
 
     let currentSongIndex = 0;
     let songs = null;
     let audio = new Audio();
     let videoFile = null;
-    
+
     // *----tag related----*
-    
     function addTag(tag) {
         const tagElement = document.createElement('div');
         tagElement.className = 'tag';
         tagElement.innerHTML = `<span>#${tag}</span><span class="remove-tag">&times;</span>`;
         tagsContainer.appendChild(tagElement);
-    
+
         tagElement.querySelector('.remove-tag').addEventListener('click', function() {
             tagsContainer.removeChild(tagElement);
         });
     }
 
     // *----fetch data related----*
-
     function processMetadata(metadata) {
         return metadata.map(item => ({
             title: item.title,
@@ -57,7 +59,7 @@ document.addEventListener('DOMContentLoaded', function() {
             score: calculateScore(item.stats)
         })).sort((a, b) => b.score - a.score);
     }
-    
+
     function calculateScore(stats) {
         return stats.playCount + stats.diggCount * 2 + stats.commentCount * 3 + stats.shareCount * 4;
     }
@@ -78,36 +80,36 @@ document.addEventListener('DOMContentLoaded', function() {
             return (num / 1000).toFixed(1) + 'k';
         }
         return num;
-    }   
+    }
 
-    function createMusicCard(song,idx) {
+    function createMusicCard(song) {
         const card = document.createElement('div');
         card.className = 'music-card';
-    
+
         const img = document.createElement('img');
         img.src = song.coverLarge;
         img.alt = song.title;
-    
+
         const titleContainer = document.createElement('div');
         titleContainer.className = 'title-container';
         const title = document.createElement('h3');
-        title.textContent = truncateText(song.title, 15); // Example: Limiting to 30 characters
+        title.textContent = truncateText(song.title, 15);
         titleContainer.appendChild(title);
 
         const authorContainer = document.createElement('div');
         authorContainer.className = 'author-container';
         const author = document.createElement('p');
-        author.textContent = `Author: ${truncateText(song.authorName, 15)}`; // Example: Limiting to 20 characters
+        author.textContent = `Author: ${truncateText(song.authorName, 15)}`;
         authorContainer.appendChild(author);
-        
+
         const duration = document.createElement('p');
         duration.textContent = `Duration: ${song.duration} sec`;
-        
+
         const playCount = document.createElement('p');
-        playCount.textContent = `Played: ${formatNumber(song.playCount)}`; // Using formatNumber function
+        playCount.textContent = `Played: ${formatNumber(song.playCount)}`;
 
         const diggCount = document.createElement('p');
-        diggCount.textContent = `Digged: ${formatNumber(song.diggCount)}`; // Using formatNumber function
+        diggCount.textContent = `Digged: ${formatNumber(song.diggCount)}`;
 
         const playDiggContainer = document.createElement('div');
         playDiggContainer.className = 'play-digg-container';
@@ -119,48 +121,116 @@ document.addEventListener('DOMContentLoaded', function() {
         playButton.onclick = function() {
             playSong(song);
         };
-    
-        const downloadButton = document.createElement('button');
-        downloadButton.textContent = 'Download';
-        downloadButton.onclick = function() {
-            downloadSong(song.playUrl, song.title);
-        };
 
-        const emptyVideoNotice = document.createElement('p');
-        emptyVideoNotice.style.display = 'none';
-        emptyVideoNotice.style.color = 'red';
-        emptyVideoNotice.textContent = 'Please upload a video first';
+        const identifyButton = document.createElement('button');
+        identifyButton.textContent = 'Identify Music';
+        identifyButton.onclick = function() {
+            identifyMusic(song.playUrl);
+        };
 
         const demoButton = document.createElement('button');
         demoButton.textContent = 'Demo';
         demoButton.onclick = function() {
             if (videoFile == null){
-                emptyVideoNotice.style.display = 'block';
+                alert('Please upload a video first.');
                 return;
             }
-            emptyVideoNotice.style.display = 'none';
             playDemo(song);
         };
 
         const buttonContainer = document.createElement('div');
         buttonContainer.className = 'button-container';
         buttonContainer.appendChild(playButton);
-        // buttonContainer.appendChild(downloadButton);
+        buttonContainer.appendChild(identifyButton);
         buttonContainer.appendChild(demoButton);
         card.appendChild(img);
-        
         card.appendChild(titleContainer);
         card.appendChild(authorContainer);
         card.appendChild(duration);
         card.appendChild(playDiggContainer);
         card.appendChild(buttonContainer);
-        card.appendChild(emptyVideoNotice);
-    
+
         return card;
     }
 
+    function identifyMusic(playUrl) {
+        loadingNotice.style.display = 'block'; // Show the loading notice
+    
+        fetch(playUrl)
+            .then(response => response.blob())
+            .then(blob => {
+                const formData = new FormData();
+                formData.append('file', blob, 'audio.mp3');
+    
+                return fetch('http://18.118.11.25:5000/identify', {
+                    method: 'POST',
+                    body: formData
+                });
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Identify Music Response:', data);
+                loadingNotice.style.display = 'none'; // Hide the loading notice
+    
+                if (data.error) {
+                    alert(data.error);  // Display error message if any
+                    return;
+                }
+    
+                if (data.length > 0) {
+                    identifiedMusicDetails.innerHTML = '';
+                    data.forEach(item => {
+                        identifiedMusicDetails.innerHTML += `
+                            <div class="identified-music-section">
+                                <h3>Spotify</h3>
+                                <img src="${item.spotify?.tracks.items[0]?.album.images[0]?.url || ''}" alt="Cover Image" class="cover-img">
+                                <p><strong>Title:</strong> ${item.spotify?.tracks.items[0]?.name || 'N/A'}</p>
+                                <p><strong>Artists:</strong> ${item.spotify?.tracks.items[0]?.artists.map(artist => artist.name).join(', ') || 'N/A'}</p>
+                                <p><strong>Album:</strong> ${item.spotify?.tracks.items[0]?.album.name || 'N/A'}</p>
+                                <p><strong>Release Date:</strong> ${item.spotify?.tracks.items[0]?.album.release_date || 'N/A'}</p>
+                                <p><strong>Duration:</strong> ${(item.spotify?.tracks.items[0]?.duration_ms / 1000).toFixed(0) || 'N/A'} sec</p>
+                                <p><strong>Link:</strong> ${item.spotify?.tracks.items[0]?.external_urls.spotify ? `<a href="${item.spotify?.tracks.items[0]?.external_urls.spotify}" target="_blank"><button>Spotify</button></a>` : 'N/A'}</p>
+                            </div>
+                            <hr>
+                            <div class="identified-music-section">
+                                <h3>YouTube</h3>
+                                <img src="${item.youtube?.items[0]?.snippet.thumbnails.high.url || ''}" alt="Cover Image" class="cover-img">
+                                <p><strong>Title:</strong> ${item.youtube?.items[0]?.snippet.title || 'N/A'}</p>
+                                <p><strong>Channel:</strong> ${item.youtube?.items[0]?.snippet.channelTitle || 'N/A'}</p>
+                                <p><strong>Description:</strong> ${item.youtube?.items[0]?.snippet.description || 'N/A'}</p>
+                                <p><strong>Publish Date:</strong> ${item.youtube?.items[0]?.snippet.publishedAt || 'N/A'}</p>
+                                <p><strong>Link:</strong> ${item.youtube?.items[0]?.id.videoId ? `<a href="https://www.youtube.com/watch?v=${item.youtube.items[0].id.videoId}" target="_blank"><button>YouTube</button></a>` : 'N/A'}</p>
+                            </div>
+                        `;
+                    });
+                    identifiedMusicDetails.style.display = 'block';
+                    modal.style.display = 'block';
+                } else {
+                    identifiedMusicDetails.innerHTML = '<p>No music identified.</p>';
+                    identifiedMusicDetails.style.display = 'block';
+                    modal.style.display = 'block';
+                }
+            })
+            .catch(error => {
+                console.error('Error identifying music:', error);
+                loadingNotice.style.display = 'none'; // Hide the loading notice
+            });
+    }
+
+    
+
+    closeModal.onclick = function() {
+        modal.style.display = 'none';
+    }
+
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = 'none';
+        }
+    }
+
     function playDemo(song) {
-        const audioUrl = song.playUrl; // Assuming song.audioUrl is the URL of the uploaded audio
+        const audioUrl = song.playUrl; 
         const videoUrl = URL.createObjectURL(videoFile);
     
         const demoWindow = window.open('', '_blank');
@@ -175,7 +245,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <title>Video demo</title>
                 <style>
                     #audioElement {
-                        display: none; /* Hide the audio element */
+                        display: none; 
                     }
                 </style>
                 <link rel="stylesheet" href="demo.css">
@@ -204,7 +274,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     const playPauseButton = document.getElementById('playPauseButton');
                     let isPlaying = false;
     
-                    // Play/Pause button click event
                     playPauseButton.addEventListener('click', function() {
                         if (!isPlaying) {
                             video.play();
@@ -220,20 +289,18 @@ document.addEventListener('DOMContentLoaded', function() {
                     });
 
                     video.addEventListener('ended', function() {
-                        audio.currentTime = 0; // Reset audio to start
+                        audio.currentTime = 0; 
                         audio.pause();
                         playPauseButton.textContent = 'Play';
                         isPlaying = false;
                     });
 
-
                     audio.addEventListener('ended', function() {
-                        audio.currentTime = 0; // Reset audio to start
-                        audio.play();
+                        audio.currentTime = 0; 
+                        video.pause();
                         playPauseButton.textContent = 'Play';
                         isPlaying = false;
                     });
-    
                 </script>
             </body>
             </html>
@@ -307,13 +374,11 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         
-        //clear previous notice 
         tagInvalidNotice.textContent = '';
         noResultNotice.textContent = '';
         
         loadingElement.style.display = 'block';
 
-        // fetch metadata based on tag
         fetch(FETCH_URL, {
             method: 'POST',
             headers: {
@@ -323,11 +388,8 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(response => response.json())
         .then(metadata => {
-            // Clear previous recommendations
             musicCardsContainer.innerHTML = '';
-            
             loadingElement.style.display = 'none';
-            
             songs = processMetadata(metadata.data);
             songs.forEach(song => {
                 const card = createMusicCard(song);
@@ -342,7 +404,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    
     playPauseButton.addEventListener('click', function() {
         if (audio.paused) {
             audio.play();
@@ -370,5 +431,4 @@ document.addEventListener('DOMContentLoaded', function() {
     progressBar.addEventListener('input', function() {
         audio.currentTime = (progressBar.value / 100) * audio.duration;
     });
-
 });
