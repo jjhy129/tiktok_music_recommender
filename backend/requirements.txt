@@ -5,3 +5,4 @@ quart==0.19.6
 quart_cors==0.7.0
 Requests==2.32.3
 setuptools==69.5.1
+TikTokApi==6.4.0
