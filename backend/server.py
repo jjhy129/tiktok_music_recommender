@@ -2,17 +2,19 @@ import os
 import sys
 import asyncio
 import json
+from datetime import datetime
+from quart import Quart, request, jsonify
+from quart_cors import cors
 
 sys.path.append(os.path.abspath(os.path.join('third_party', 'TikTok-Api')))
 
-from quart import Quart, request, jsonify
-from quart_cors import cors
 from TikTokApi import TikTokApi
 from TikTokApi.api.video import Video
 
 PORT = 8888
 COUNT = 50
 ms_token = os.environ.get("ms_token")
+successful_requests = 0
 
 api = None
 apiLock = asyncio.Lock()
@@ -50,12 +52,14 @@ async def get_hashtag_videos(tag: str) -> list:
 
 @app.route('/data', methods=['POST'])
 async def receive_data():
+    global successful_requests
     try:
         data = await request.get_json()
         tags = " ".join([str(value) for value in data.values()])
         print(f"Received tags: {tags}")
+        successful_requests += 1
+        
         item_list = []
-
         videos = await get_hashtag_videos(tags)  
         item_list.extend(videos)
 
@@ -64,5 +68,18 @@ async def receive_data():
         print("Error:", e)
         return jsonify({'status': 'error', 'message': str(e)})
 
+async def daily_log_writer():
+    global successful_requests
+    last_logged_date = datetime.now().date()
+    while True:
+        current_date = datetime.now().date()
+        if current_date > last_logged_date:
+            with open('log/access.txt', 'a') as file:
+                file.write(f"{last_logged_date}: {successful_requests}\n")
+            last_logged_date = current_date
+            successful_requests = 0  # Reset the counter
+        await asyncio.sleep(3600)  # Check once every hour
+
 if __name__ == '__main__':
+    app.before_serving(lambda: asyncio.create_task(daily_log_writer()))
     app.run(host='0.0.0.0',port=PORT)
