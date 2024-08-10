@@ -1,0 +1,2 @@
+nginx 403:
+sudo vim /etc/nginx/nginx.conf change user to ubuntu

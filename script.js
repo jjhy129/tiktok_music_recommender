@@ -1,4 +1,4 @@
-const PUBLIC_ADDR = 'www.normbrak.com';
+const PUBLIC_ADDR = 'tiktokmusic.normbrak.com';
 const FETCH_URL = `https://${PUBLIC_ADDR}/data`;
 
 document.addEventListener('DOMContentLoaded', function() {
