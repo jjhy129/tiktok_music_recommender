@@ -80,6 +80,9 @@ async def daily_log_writer():
             successful_requests = 0  # Reset the counter
         await asyncio.sleep(3600)  # Check once every hour
 
+@app.before_serving
+async def startup():
+    asyncio.create_task(daily_log_writer())
+
 if __name__ == '__main__':
-    app.before_serving(lambda: asyncio.create_task(daily_log_writer()))
     app.run(host='0.0.0.0',port=PORT)
