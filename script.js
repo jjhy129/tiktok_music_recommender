@@ -162,7 +162,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const formData = new FormData();
                 formData.append('file', blob, 'audio.mp3');
     
-                return fetch('http://18.118.11.25:5000/identify', {
+                return fetch('https://music.recognition.normbrak.com:8443/identify', {
                     method: 'POST',
                     body: formData
                 });
