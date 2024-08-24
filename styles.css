@@ -30,6 +30,19 @@ body {
     margin: 10px 0;
 }
 
+.user-guide ol {
+    padding-left: 20px;
+}
+
+.user-guide li {
+    margin-bottom: 5px; /* Increase the margin-bottom for more space between lines */
+}
+
+.user-guide p {
+    font-size: 1em;
+    color: #333;
+}
+
 #add-tag-button {
     display: block;
     width: 100%;
@@ -167,12 +180,14 @@ body {
     width: 100%;
     background-color: #6b47dc;
     color: white;
-    justify-content: space-between;
+    display: flex;
+    justify-content: flex-start; /* Align elements to the left */
     align-items: center;
     padding: 10px 20px;
     box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
     display: none;
 }
+
 
 #music-bar #current-song-info {
     flex-grow: 1;
@@ -182,6 +197,7 @@ body {
     display: flex;
     align-items: center;
     gap: 10px;
+    margin-right: 20px; /* Spacing between controls and time info */
 }
 
 #music-bar #controls button {
@@ -190,6 +206,14 @@ body {
     color: white;
     font-size: 20px;
     cursor: pointer;
+}
+
+#time-info {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 14px;
+    margin-right: 20px; /* Ensures spacing between time and progress bar */
 }
 
 #progress-bar {

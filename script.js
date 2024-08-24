@@ -136,19 +136,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
             playDemo(song);
-        };
+        }; 
 
         const buttonContainer = document.createElement('div');
         buttonContainer.className = 'button-container';
         buttonContainer.appendChild(playButton);
         buttonContainer.appendChild(identifyButton);
-        buttonContainer.appendChild(demoButton);
+        // buttonContainer.appendChild(demoButton);
         card.appendChild(img);
         card.appendChild(titleContainer);
         card.appendChild(authorContainer);
         card.appendChild(duration);
         card.appendChild(playDiggContainer);
-        card.appendChild(buttonContainer);
+        card.appendChild(buttonContainer); 
 
         return card;
     }
@@ -229,7 +229,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    function playDemo(song) {
+/*     function playDemo(song) {
         const audioUrl = song.playUrl; 
         const videoUrl = URL.createObjectURL(videoFile);
     
@@ -309,9 +309,9 @@ document.addEventListener('DOMContentLoaded', function() {
         } else {
             alert('Popup blocked! Please allow popups to view the demo.');
         }
-    }
+    } */
 
-    function downloadSong(url, title) {
+/*     function downloadSong(url, title) {
         fetch(url)
             .then(response => response.blob())
             .then(blob => {
@@ -323,7 +323,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.body.removeChild(link);
             })
             .catch(error => console.error('Error downloading the song:', error));
-    }
+    } */
     
     function playSong(song) {
         audio.pause();
@@ -339,17 +339,29 @@ document.addEventListener('DOMContentLoaded', function() {
         
         audio.addEventListener('timeupdate', function() {
             progressBar.value = (audio.currentTime / audio.duration) * 100;
+
+            // Update current time and total time
+        const currentMinutes = Math.floor(audio.currentTime / 60);
+        const currentSeconds = Math.floor(audio.currentTime % 60);
+        const totalMinutes = Math.floor(audio.duration / 60);
+        const totalSeconds = Math.floor(audio.duration % 60);
+    
+        document.getElementById('current-time').textContent = `${currentMinutes}:${currentSeconds < 10 ? '0' : ''}${currentSeconds}`;
+        document.getElementById('total-time').textContent = `${totalMinutes}:${totalSeconds < 10 ? '0' : ''}${totalSeconds}`;
+
         });
+
+        
     }
 
-    vidUpldButton.addEventListener('submit', function(event) {
+/*     vidUpldButton.addEventListener('submit', function(event) {
         event.preventDefault();
 
         const fileInput = document.getElementById('video-file');
         videoFile = fileInput.files[0];
         uploadStatus.textContent = `Video "${videoFile.name}" uploaded successfully.`;
         uploadStatus.style.display = 'block';
-    });
+    }); */
 
     addTagButton.addEventListener('click', function() {
         const tag = tagInput.value.trim();
