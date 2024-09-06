@@ -153,6 +153,14 @@ document.addEventListener('DOMContentLoaded', function() {
         return card;
     }
 
+    function formatDuration(milliseconds) {
+        const totalSeconds = Math.floor(milliseconds / 1000);
+        const minutes = Math.floor(totalSeconds / 60);
+        const seconds = totalSeconds % 60;
+        return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+    }
+    
+
     function identifyMusic(playUrl) {
         loadingNotice.style.display = 'block'; // Show the loading notice
     
@@ -188,7 +196,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <p><strong>Artists:</strong> ${item.spotify?.tracks.items[0]?.artists.map(artist => artist.name).join(', ') || 'N/A'}</p>
                                 <p><strong>Album:</strong> ${item.spotify?.tracks.items[0]?.album.name || 'N/A'}</p>
                                 <p><strong>Release Date:</strong> ${item.spotify?.tracks.items[0]?.album.release_date || 'N/A'}</p>
-                                <p><strong>Duration:</strong> ${(item.spotify?.tracks.items[0]?.duration_ms / 1000).toFixed(0) || 'N/A'} sec</p>
+                                <p><strong>Duration:</strong> ${formatDuration(item.spotify?.tracks.items[0]?.duration_ms) || 'N/A'}</p>
                                 <p><strong>Link:</strong> ${item.spotify?.tracks.items[0]?.external_urls.spotify ? `<a href="${item.spotify?.tracks.items[0]?.external_urls.spotify}" target="_blank"><button>Spotify</button></a>` : 'N/A'}</p>
                             </div>
                             <hr>
@@ -200,6 +208,16 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <p><strong>Description:</strong> ${item.youtube?.items[0]?.snippet.description || 'N/A'}</p>
                                 <p><strong>Publish Date:</strong> ${item.youtube?.items[0]?.snippet.publishedAt || 'N/A'}</p>
                                 <p><strong>Link:</strong> ${item.youtube?.items[0]?.id.videoId ? `<a href="https://www.youtube.com/watch?v=${item.youtube.items[0].id.videoId}" target="_blank"><button>YouTube</button></a>` : 'N/A'}</p>
+                            </div>
+                            <div class="identified-music-section">
+                                <h3>Apple Music</h3>
+                                <img src="${item.apple_music.data[0]?.attributes.artwork?.url.replace('{w}x{h}bb', '300x300bb') || ''}" alt="Cover Image" class="cover-img">
+                                <p><strong>Title:</strong> ${item.apple_music.data[0]?.attributes.name || 'N/A'}</p>
+                                <p><strong>Artists:</strong> ${item.apple_music.data[0]?.attributes.artistName || 'N/A'}</p>
+                                <p><strong>Album:</strong> ${item.apple_music.data[0]?.attributes.albumName || 'N/A'}</p>
+                                <p><strong>Release Date:</strong> ${item.apple_music.data[0]?.attributes.releaseDate || 'N/A'}</p>
+                                <p><strong>Duration:</strong> ${formatDuration(item.apple_music.data[0]?.attributes.durationInMillis) || 'N/A'}</p>
+                                <p><strong>Link:</strong> ${item.apple_music.data[0]?.attributes.url ? `<a href="${item.apple_music.data[0]?.attributes.url}" target="_blank"><button>Apple Music</button></a>` : 'N/A'}</p>
                             </div>
                         `;
                     });
