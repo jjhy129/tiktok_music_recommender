@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Identify original music from video links with our Music Identification tool. Discover the soundtrack in any TikTok or video using advanced recognition technology.">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Identification | Find Original Music from Videos</title>
+    <link rel="stylesheet" href="../css/music_identification.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+    <div id="header-placeholder"></div>
+
+    <div class="container">
+        <h1>Identify Music from Video Links</h1>
+        <div class="user-guide">
+            <h2>How to Use</h2>
+            <p>Enter the video link or name in the box below to find the original music used in the video:</p>
+        </div>
+        
+        <div class="input-box">
+            <input type="text" id="video-input" placeholder="Enter video link or name (e.g. TikTok video URL)">
+            <button class="search-button">Identify Music</button>
+        </div>
+        
+        <div id="loading" class="loading">Loading...</div>
+        <div id="identified-music" class="music-recommendations">
+            <h2>Music Identified</h2>
+            <div id="music-results"></div>
+        </div>
+        
+        <div id="no_result_notice" style="color: black;"></div>
+    </div>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="../js/music_identification.js"></script>
+
+    <script>
+        // Load the header from components
+        fetch('../components/header.html')
+            .then(response => response.text())
+            .then(data => document.getElementById('header-placeholder').innerHTML = data);
+
+        // Load the footer
+        fetch('../components/footer.html')
+            .then(response => response.text())
+            .then(data => document.getElementById('footer-placeholder').innerHTML = data);
+    </script>
+</body>
+</html>

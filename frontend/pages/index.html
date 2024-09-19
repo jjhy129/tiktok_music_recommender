@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Find music for TikTok videos, discover trending TikTok songs, and learn how to choose the perfect music for your videos. Stay updated with TikTok music trends.">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trending Tiktok Sounds | Find Music for TikTok Videos</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "TikTok Music Recommender",
+      "description": "Discover trending music for your TikTok videos using tags and identify tracks in real-time with our music recognition technology.",
+      "url": "https://tiktokmusic.normbrak.com",
+      "applicationCategory": "MultimediaApplication",
+      "operatingSystem": "Web"
+    }
+    </script>
+    
+    <style>
+        /* Responsive Styles */
+        @media screen and (max-width: 768px) {
+            .container {
+                padding: 10px;
+                width: 100%;
+            }
+
+            h1, h2 {
+                font-size: 1.5em;
+                text-align: center;
+            }
+
+            .tag-input-box {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            #tag-input {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+
+            #add-tag-button, .search-button {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+
+            .music-cards {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .music-card {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+
+            #music-bar {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            #current-song-info {
+                text-align: center;
+                margin-bottom: 10px;
+            }
+
+            #controls {
+                display: flex;
+                justify-content: space-around;
+                width: 100%;
+            }
+
+            #progress-bar {
+                width: 100%;
+                margin-top: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="header-placeholder"></div>
+
+
+    <div class="container">
+        <h1>TikTok Music Recommender | Find Music for Video and TikTok Sounds</h1>
+
+        <div class="user-guide">
+            <h2>User Guide</h2>
+            <p>Welcome to the TikTok Music Recommender! Follow these steps to find the perfect music for your videos:</p>
+            <ol>
+                <li><strong>Add Tags:</strong> Use the input box to add tags related to your video content. Click "Add Tag" after typing each tag.</li>
+                <li><strong>Search for Songs:</strong> Once you've added your tags, click the "Search for songs" button to find music that matches your tags.</li>
+                <li><strong>Play Music:</strong> Click "Play" on any music card to listen to the track.</li>
+                <li><strong>Identify Music:</strong> Click "Identify Music" to see its details on Spotify or YouTube.</li>
+            </ol>
+        </div>
+        
+        <div class="tag-input-box">            
+            <!-- <div class="upload-container">
+                <h3>Upload a Video</h3>
+                <form id="upload-form">
+                    <input type="file" id="video-file" accept="video/*" required>
+                    <button type="submit">Upload</button>
+                </form>
+                <div id="upload-status"></div>
+            </div> -->
+            <input type="text" id="tag-input" placeholder="Add a tag (e.g. food, study, sports...)">
+            <button id="add-tag-button">Add Tag</button>
+            <div id="tags" class="tags"></div>
+            <div id="tag_invalid_notice" style="color: red;"></div>
+            <button class="search-button">Search for songs</button>
+        </div>
+        <div id="loading" class="loading">Loading...</div>
+        <div class="music-recommendations">
+            <h2>Discover Trending TikTok Sounds and Songs</h2>
+            <div class="music-cards" id="music-cards"></div>
+        </div>
+        <div id="no_result_notice" style="color: black;"></div>
+    </div>
+    <div id="music-bar">
+        <div id="current-song-info">
+            <span id="current-song-title">No song playing</span> - <span id="current-song-author">Unknown</span>
+        </div>
+        <div id="controls">
+            <button id="prev-button"><i class="fas fa-backward"></i></button>
+            <button id="play-pause-button"><i class="fas fa-play"></i></button>
+            <button id="next-button"><i class="fas fa-forward"></i></button>
+        </div>
+        <div id="time-info">
+            <span id="current-time">0:00</span> / <span id="total-time">0:00</span>
+        </div>
+        <input type="range" id="progress-bar" value="0">
+    </div>
+
+    <!-- Modal for identified music details -->
+    <div id="identified-music-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div id="identified-music-details"></div>
+        </div>
+    </div>
+
+    <div id="loading-notice" class="loading-notice">Identifying music, please wait...</div>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="../js/script.js"></script>
+
+    <script>
+        // Load the header from components
+        fetch('../components/header.html')
+            .then(response => response.text())
+            .then(data => document.getElementById('header-placeholder').innerHTML = data);
+
+        // Load the footer
+        fetch('../components/footer.html')
+            .then(response => response.text())
+            .then(data => document.getElementById('footer-placeholder').innerHTML = data);
+    </script>
+</body>
+</html>
