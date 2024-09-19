@@ -12,8 +12,8 @@ This project is a TikTok video background music recommender that suggests suitab
 
 ## Backend
 This project used the following repos for backends
-TikTok-Api: https://github.com/davidteather/TikTok-Api
-Music Recognition using ACR: https://github.com/jjhy129/music_recognition
+- TikTok-Api: https://github.com/davidteather/TikTok-Api
+- Music Recognition using ACR: https://github.com/jjhy129/music_recognition
 
 
 ## Video Demo
