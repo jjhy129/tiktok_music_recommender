@@ -14,7 +14,7 @@ elif [ "$1" == "-clean" ]; then
 
 # inspect daily access log
 elif [ "$1" == "-inspect" ]; then
-    sudo docker exec -it agitated_lamarr /bin/bash
+    sudo docker exec -it optimistic_cartwright /bin/bash
     # then: cat log/access.txt 
 
 else
